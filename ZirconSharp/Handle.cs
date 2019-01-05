@@ -8,9 +8,9 @@ namespace ZirconSharp {
 		// Name of the zircon dynamic library to call, available to all ZirconSharp types
 		internal const string Library = "zircon";
 
-		public ZirconHandle (IntPtr preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
+		public ZirconHandle (uint preexistingHandle, bool ownsHandle) : base (IntPtr.Zero, ownsHandle)
 		{
-			SetHandle (preexistingHandle);
+			SetHandle ((IntPtr) preexistingHandle);
 		}
 
 		public override bool IsInvalid => handle == IntPtr.Zero;
@@ -21,12 +21,12 @@ namespace ZirconSharp {
 		}
 
 		[DllImport (Library)]
-		extern static void zx_handle_close (IntPtr handle);
+		extern static void zx_handle_close (uint handle);
 
 
 		protected override bool ReleaseHandle ()
 		{
-			zx_handle_close (handle);
+			zx_handle_close ((uint) handle);
 			return true;
 		}
 

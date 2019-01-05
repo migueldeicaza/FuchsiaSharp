@@ -8,8 +8,201 @@
 // found in the LICENSE file.
 //
 using System;
+using System.Runtime.InteropServices;
+
 namespace ZirconSharp {
+	/// <summary>
+	///   Zircon statuses are signed 32 bit integers. The space of values is
+	///   divided as follows:  Zero value indicates an OK status; negative values are defined by the system, 
+    	///   in this enumeration; positive values are reserved for protocol-specific error values,
+	///   and will never be defined by the system.
+	/// </summary>
 	public enum ZxStatus {
+		Ok = 0,
+
+		/// <summary>
+		/// The system encountered an otherwise unspecified error while performing the operation.
+		/// </summary>
+		ErrInternal = -1,
+
+		/// <summary>
+		/// The operation is not implemented, supported, or enabled.
+		/// </summary>
+		ErrNotSupported = -2,
+
+		/// <summary>The system was not able to allocate some resource needed for the
+		/// operation.</summary>
+		ErrNoResources = (-3),
+
+		/// <summary>The system was not able to allocate memory needed for the operation.</summary>
+		ErrNoMemory = (-4),
+
+		/// <summary>The system call was interrupted, but should be retried.  This should not be
+		/// seen outside of the VDSO.</summary>
+		ErrInternalIntrRetry = (-6),
+
+		/// <summary>an argument is invalid, ex. null pointer</summary>
+		ErrInvalidArgs = (-10),
+
+		/// <summary>A specified handle value does not refer to a handle.</summary>
+		ErrBadHandle = (-11),
+
+		/// <summary>The subject of the operation is the wrong type to perform the
+		/// operation. Example: Attempting a message_read on a thread handle.</summary>
+		ErrWrongType = (-12),
+
+		/// <summary>The specified syscall number is invalid.</summary>
+		ErrBadSyscall = (-13),
+
+		/// <summary>An argument is outside the valid range for this operation.</summary>
+		ErrOutOfRange = (-14),
+
+		/// <summary>A caller provided buffer is too small for this operation.</summary>
+		ErrBufferTooSmall = (-15),
+
+		/// <summary>operation failed because the current state of the object does not allow it, or
+		/// a precondition of the operation is not satisfied</summary>
+		ErrBadState = (-20),
+
+		/// <summary>The time limit for the operation elapsed before the operation
+		/// completed.</summary>
+		ErrTimedOut = (-21),
+
+		/// <summary>The operation cannot be performed currently but potentially could succeed if
+		/// the caller waits for a prerequisite to be satisfied, for example waiting for a handle to
+		/// be readable or writable. Example: Attempting to read from a channel that has no messages
+		/// waiting but has an open remote will return ZX_ERR_SHOULD_WAIT. Attempting to read from a
+		/// channel that has no messages waiting and has a closed remote end will return
+		/// ZX_ERR_PEER_CLOSED.</summary>
+
+		ErrShouldWait = (-22),
+
+		/// <summary>The in-progress operation (e.g. a wait) has been canceled.</summary>
+		ErrCanceled = (-23),
+
+		/// <summary>The operation failed because the remote end of the subject of the operation was
+		/// closed.</summary>
+		ErrPeerClosed = (-24),
+
+		/// <summary>The requested entity is not found.</summary>
+		ErrNotFound = (-25),
+
+		/// <summary>An object with the specified identifier already exists. Example: Attempting to
+		/// create a file when a file already exists with that name.</summary>
+		ErrAlreadyExists = (-26),
+
+		/// <summary>The operation failed because the named entity is already owned or controlled by
+		/// another entity. The operation could succeed later if the current owner releases the
+		/// entity.
+		ErrAlreadyBound = (-27),
+
+		/// <summary>The subject of the operation is currently unable to perform the
+		/// operation. Note: This is used when there's no direct way for the caller to observe when
+		/// the subject will be able to perform the operation and should thus retry.</summary>
+		ErrUnavailable = (-28),
+
+
+		/// <summary>The caller did not have permission to perform the specified
+		/// operation.</summary>
+		ErrAccessDenied = (-30),
+
+		/// <summary>Otherwise unspecified error occurred during I/O.</summary>
+		ErrIo = (-40),
+
+		/// <summary>The entity the I/O operation is being performed on rejected the
+		/// operation. Example: an I2C device NAK'ing a transaction or a disk controller rejecting
+		/// an invalid command, or a stalled USB endpoint.</summary>
+		ErrIoRefused = (-41),
+
+		/// <summary>The data in the operation failed an integrity check and is possibly
+		/// corrupted. Example: CRC or Parity error.</summary>
+		ErrIoDataIntegrity = (-42),
+
+		/// <summary>The data in the operation is currently unavailable and may be permanently
+		/// lost. Example: A disk block is irrecoverably damaged.</summary>
+		ErrIoDataLoss = (-43),
+
+		/// <summary>The device is no longer available (has been unplugged from the system, powered
+		/// down, or the driver has been unloaded)</summary>
+		ErrIoNotPresent = (-44),
+
+		/// <summary>More data was received from the device than expected. Example: a USB "babble"
+		/// error due to a device sending more data than the host queued to receive.</summary>
+		ErrIoOverrun = (-45),
+
+		/// <summary>An operation did not complete within the required timeframe. Example: A USB
+		/// isochronous transfer that failed to complete due to an overrun or underrun.</summary>
+		ErrIoMissedDeadline = (-46),
+
+		/// <summary>The data in the operation is invalid parameter or is out of range. Example: A
+		/// USB transfer that failed to complete with TRB Error</summary>
+		ErrIoInvalid = (-47),
+
+		/// <summary>Path name is too long.</summary>
+		ErrBadPath = (-50),
+
+		/// <summary>Object is not a directory or does not support directory operations. Example:
+		/// Attempted to open a file as a directory or attempted to do directory operations on a
+		/// file.</summary>
+		ErrNotDir = (-51),
+
+		/// <summary>Object is not a regular file.</summary>
+		ErrNotFile = (-52),
+
+		/// <summary>This operation would cause a file to exceed a filesystem-specific size
+		/// limit</summary>
+		ErrFileBig = (-53),
+
+		/// <summary>Filesystem or device space is exhausted.</summary>
+		ErrNoSpace = (-54),
+
+		/// <summary>Directory is not empty.</summary>
+		ErrNotEmpty = (-55),
+
+		/// <summary>Do not call again. Example: A notification callback will be called on every
+		/// event until it returns something other than ZX_OK. This status allows differentiation
+		/// between "stop due to an error" and "stop because the work is done."</summary>
+		ErrStop = (-60),
+
+		/// <summary>Advance to the next item. Example: A notification callback will use this
+		/// response to indicate it did not "consume" an item passed to it, but by choice, not due
+		/// to an error condition.</summary>
+		ErrNext = (-61),
+
+		/// <summary>Ownership of the item has moved to an asynchronous worker.</summary>
+		/// <remarks>
+		/// Unlike ZX_ERR_STOP, which implies that iteration on an object
+		/// should stop, and ZX_ERR_NEXT, which implies that iteration
+		/// should continue to the next item, ZX_ERR_ASYNC implies
+		/// that an asynchronous worker is responsible for continuing iteration.
+		///
+		/// Example: A notification callback will be called on every
+		/// event, but one event needs to handle some work asynchronously
+		/// before it can continue. ZX_ERR_ASYNC implies the worker is
+		/// responsible for resuming iteration once its work has completed.
+		/// </remarks>
+		ErrAsync = (-62),
+
+		/// <summary>Specified protocol is not supported.</summary>
+		ErrProtocolNotSupported = (-70),
+
+		/// <summary>Host is unreachable.</summary>
+		ErrAddressUnreachable = (-71),
+
+		/// <summary>Address is being used by someone else.</summary>
+		ErrAddressInUse = (-72),
+
+		/// <summary>Socket is not connected.</summary>
+		ErrNotConnected = (-73),
+
+		/// <summary>Remote peer rejected the connection.</summary>
+		ErrConnectionRefused = (-74),
+
+		/// <summary>Connection was reset.</summary>
+		ErrConnectionReset = (-75),
+
+		/// <summary>Connection was aborted.</summary>
+		ErrConnectionAborted = (-76),
 
 	}
 
@@ -304,4 +497,24 @@ namespace ZirconSharp {
 	public enum ZxVmoSignal : uint {
 		ZeroChildren = ZxObjectSignal.Signaled
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	internal unsafe struct zx_channel_call_args {
+		internal void *wr_bytes;
+		internal uint *wr_handles;
+		internal void *rd_bytes;
+		internal uint *rd_handles;
+		internal uint wr_num_bytes;
+		internal uint wr_num_handles;
+		internal uint rd_num_bytes;
+		internal uint rd_num_handles;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+    	internal struct zx_wait_item {
+		uint handle;
+		ZxObjectSignal waitfor;
+		ZxObjectSignal pending;
+	}
+
 }

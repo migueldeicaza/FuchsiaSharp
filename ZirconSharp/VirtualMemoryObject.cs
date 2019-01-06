@@ -1,5 +1,5 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿	using System;
+	using System.Runtime.InteropServices;
 
 namespace ZirconSharp {
 	/// <summary>
@@ -166,7 +166,52 @@ namespace ZirconSharp {
 		/// <summary>
 		/// Read bytes from the VMO
 		/// </summary>
-		/// <returns>The Ok status or ErrBadHandle, ErrWrongType, ErrAccessDeined, ErrInvalidArgs, ErrOutOfRange, ErrBadState.</returns>
+		/// <returns>
+		///   <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success 
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle is not a VMO handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        handle does not have the ZX_RIGHT_READ right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        buffer is an invalid pointer or NULL.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrOutOfRange</term>
+		///      <description>
+		///        offset starts at or beyond the end of the VMO, or VMO is shorter than buffer_size.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadState</term>
+		///      <description>
+		///        VMO has been marked uncached and is not directly readable.
+		///      </description>
+		///    </item>
+		///   </list>
+		/// </returns>
 		/// <param name="destination">Destination where the data will be copied to.</param>
 		/// <param name="offset">Offset inside the VMO to read from.</param>
 		/// <param name="count">Number of bytes to read.</param>
@@ -181,7 +226,58 @@ namespace ZirconSharp {
 		/// <summary>
 		/// Write bytes to the VMO
 		/// </summary>
-		/// <returns>The Ok status or ErrBadHandle, ErrWrongType, ErrAccessDenied, ErrInvalidArgs, ErrNoMemory, ErrOutOfRange, ErrBadState.</returns>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle is not a VMO handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        handle does not have the ZX_RIGHT_WRITE right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        buffer is an invalid pointer or NULL.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNoMemory</term>
+		///      <description>
+		///        Failure to allocate system memory to complete write.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrOutOfRange</term>
+		///      <description>
+		///        offset starts at or beyond the end of the VMO, or VMO is shorter than buffer_size.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadState</term>
+		///      <description>
+		///        VMO has been marked uncached and is not directly writable.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
 		/// <param name="source">Source of data to copy bytes from.</param>
 		/// <param name="offset">Offset inside the VMO to write to.</param>
 		/// <param name="count">Number of bytes to write.</param>
@@ -210,7 +306,53 @@ namespace ZirconSharp {
 		/// <summary>
 		/// Resize the virtual memory object to the specified size
 		/// </summary>
-		/// <returns>Ok on Success, or one of ErrBadHandle, ErrWrongType, ErrAccessDeined, ErrUnavailable, ErrOutOfRange, ErrNoMemory.</returns>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle is not a VMO handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        handle does not have the ZX_RIGHT_WRITE right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrUnavailable</term>
+		///      <description>
+		///        The VMO was created with ZX_VMO_NON_RESIZABLE option.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrOutOfRange</term>
+		///      <description>
+		///        Requested size is too large.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNoMemory</term>
+		///      <description>
+		///        Failure due to lack of system memory.
+		///      </description>
+		///    </item>
+		/// </list>
+
+		/// </returns>
 		/// <param name="newSize">New Size for the VMO.</param>
 		public ZxStatus Resize (ulong newSize)
 		{
@@ -224,7 +366,58 @@ namespace ZirconSharp {
 		/// <summary>
 		/// Perform an operation on a range of a Virtual Memory Object
 		/// </summary>
-		/// <returns>Result of the operation Ok, ErrBadHandle, ErrOutOfRange, ErrNoMemory, ErrWrongType, ErrAccessDeined, ErrNotSupported or ErrInvalidArgs.</returns>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrOutOfRange</term>
+		///      <description>
+		///        An invalid memory range specified by offset and size.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNoMemory</term>
+		///      <description>
+		///        Allocations to commit pages for ZX_VMO_OP_COMMIT failed.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle is not a VMO handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        handle does not have sufficient rights to perform the operation.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        out is an invalid pointer, op is not a valid operation, or size is zero and op is a cache operation.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNotSupported</term>
+		///      <description>
+		///        op was ZX_VMO_OP_LOCK or ZX_VMO_OP_UNLOCK, or op was ZX_VMO_OP_DECOMMIT and the underlying VMO does not allow decommiting.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
 		/// <param name="operation">Operation to perform on the range.</param>
 		/// <param name="startOffset">Starting offset inside the VMO.</param>
 		/// <param name="size">Size on which to perform the operation, in bytes.</param>
@@ -239,11 +432,51 @@ namespace ZirconSharp {
 		/// <summary>
 		/// Sets the cache policy for the Vmo.
 		/// </summary>
-		/// <returns>Status code: Ok, ErrAccessDeined, ErrInvalidArgs, ErrBadHandle, ErrNotSupported, or ErrBadState.</returns>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        Cache policy has been configured for this VMO already and may not be changed, or handle lacks the ZX_RIGHT_MAP right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        cache_policy contains flags outside of the ones listed above, or cache_policy contains an invalid mix of cache policy flags.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNotSupported</term>
+		///      <description>
+		///        The VMO handle corresponds to is not one holding physical memory.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadState</term>
+		///      <description>
+		///        Cache policy cannot be changed because the VMO is presently mapped, cloned, a clone itself, or have any memory committed.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
 		/// <param name="policy">The cache policy for the Vmo.</param>
 		public ZxStatus SetCachePolicy (ZxCachePolicy policy)
 		{
 			return zx_vmo_set_cache_policy ((uint) handle, (uint) policy);
 		}
+
 	}
 }

@@ -517,4 +517,67 @@ namespace ZirconSharp {
 		ZxObjectSignal pending;
 	}
 
+	/// <summary>
+	/// Options for mapping Virtual Memory Objects into the address space of the process
+	/// </summary>
+	[Flags]
+	public enum ZxVmOption : uint {
+		/// <summary>
+		/// Map vmo as readable. It is an error if handle does not have VmCanMapRead permissions, the handle 
+		/// does not have the ZX_RIGHT_READ right, or the vmo handle does not have the ZX_RIGHT_READ right.
+		/// </summary>
+		PermRead = 1u << 0,
+		/// <summary>
+		/// Map vmo as writable. It is an error if handle does not have VmCanMapWrite permissions, the handle 
+		/// does not have the ZX_RIGHT_WRITE right, or the vmo handle does not have the ZX_RIGHT_WRITE right.
+		/// </summary>
+		PermWrite = 1u << 1,
+		/// <summary>
+		/// Map vmo as executable. It is an error if handle does not have VmCanMapExecute permissions, 
+		/// the handle handle does not have the ZX_RIGHT_EXECUTE right, or the vmo handle does not have the 
+		/// ZX_RIGHT_EXECUTE right.
+		/// </summary>
+		PermExecute = 1u << 2,
+		VmCompact = 1u << 3,
+		/// <summary>
+		/// Use the vmar_offset to place the mapping, invalid if handle does not have the VmCanMapSpecific permission. 
+		/// vmar_offset is an offset relative to the base address of the given VMAR. It is an error to specify a range 
+		/// that overlaps with another VMAR or mapping.
+		/// </summary>
+		VmSpecific = 1u << 4,
+		/// <summary>
+		/// Same as VmSpecific, but can overlap another mapping. It is still an error to partially-overlap another VMAR. 
+		/// If the range meets these requirements, it will atomically (with respect to all other map/unmap/protect 
+		/// operations) replace existing mappings in the area.
+		/// </summary>
+		VmSpecificOverwrite = 1u << 5,
+		/// <summary>
+		/// The new VMAR can have subregions/mappings created with VmSpecific. It is NOT an error if the parent 
+		/// does not have VmCanMapSpecific permissions.
+		/// </summary>
+		VmCanMapSpecific = 1u << 6,
+		/// <summary>
+		/// The new VMAR can contain readable mappings. It is an error if the parent does not have 
+		/// VmCanMapRead permissions.
+		/// </summary>
+		VmCanMapRead = 1u << 7,
+		/// <summary>
+		/// The new VMAR can contain writable mappings. It is an error if the parent does not have 
+		/// VmCanMapWrite permissions.
+		/// </summary>
+		VmCanMapWrite = 1u << 8,
+		/// <summary>
+		///  The new VMAR can contain executable mappings. It is an error if the parent does not have 
+		/// VmCanMapExecute permissions.
+		/// </summary>
+		VmCanMapExecute = 1u << 9,
+		/// <summary>
+		/// Immediately page into the new mapping all backed regions of the VMO. This cannot be specified if VmSpecificOverwrite is used.
+		/// </summary>
+		VmMapRange = 1u << 10,
+		/// <summary>
+		/// Maps the VMO only if the VMO is non-resizable, that is, it was created with the VmoOptions.NonResizable option.
+		/// </summary>
+		VmRequireNonResizable = 1u << 11,
+	}
 }

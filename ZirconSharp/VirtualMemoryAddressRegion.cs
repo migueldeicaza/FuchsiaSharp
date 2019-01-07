@@ -224,21 +224,253 @@ namespace ZirconSharp {
 			return zx_vmar_destroy ((uint) handle);
 		}
 
-#if false
+
 		[DllImport (Library)]
 		extern static ZxStatus zx_vmar_map (uint handle,
-					ZxVmOption options,
-					ulong vmar_offset,
-					uint vmo_handle,
-					ulong vmo_offset,
-					ulong len,
-					IntPtr mapped_addr);
+						    ZxVmOption options,
+						    ulong vmar_offset,
+						    uint vmo_handle,
+						    ulong vmo_offset,
+						    ulong len,
+						    out IntPtr mapped_addr);
 
-		public void AddMemoryMapping (ZxVmOption options, ulong vmar_offset,
-					uint vmo_handle,
-					ulong vmo_offset,
-					ulong len,
-					IntPtr mapped_addr
-#endif
+		/// <summary>
+		/// Adds a memory mapping - Maps the given VMO into the given virtual memory address region. 
+		/// The mapping retains a reference to the underlying virtual memory object, which means 
+		/// closing the VMO handle does not remove the mapping added by this function.
+		/// </summary>
+		/// <returns>
+		/// <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        Success, and and the <paramref name="mapped_addr"/> set to the absolute base address of the mapping.
+		///        The base address will be page-aligned and non-zero. In the event of failure, a negative error value is returned.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle or vmo is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle or vmo is not a VMAR or VMO handle, respectively.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadState</term>
+		///      <description>
+		///        handle refers to a destroyed VMAR.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        mapped_addr or options are not valid, vmar_offset is non-zero when neither ZX_VM_SPECIFIC nor ZX_VM_SPECIFIC_OVERWRITE are given, ZX_VM_SPECIFIC_OVERWRITE and ZX_VM_MAP_RANGE are both given, vmar_offset and len describe an unsatisfiable allocation due to exceeding the region bounds, vmar_offset or vmo_offset or len are not page-aligned, vmo_offset + ROUNDUP(len, PAGE_SIZE) overflows.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        Insufficient privileges to make the requested mapping.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNotSupported</term>
+		///      <description>
+		///        The VMO is resizable and ZX_VM_REQUIRE_NON_RESIZABLE was requested.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNoMemory</term>
+		///      <description>
+		///        Failure due to lack of memory. There is no good way for userspace to handle this (unlikely) error. In a future build this error will no longer occur.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
+		/// <param name="options"><para>Options that control how the mapping will work, these can be used:</para>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>VmSpecific</term>
+		///      <description>
+		///        Use the vmar_offset to place the mapping, invalid if handle does not have the VmCanMapSpecific permission. 
+		///        vmar_offset is an offset relative to the base address of the given VMAR. It is an error to specify a range 
+		///        that overlaps with another VMAR or mapping.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmSpecificOverwrite</term>
+		///      <description>
+		///        Same as VmSpecific, but can overlap another mapping. It is still an error to partially-overlap another
+		///        VMAR. If the range meets these requirements, it will atomically (with respect to all other 
+		///        map/unmap/protect operations) replace existing mappings in the area.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmPermRead</term>
+		///      <description>
+		///        Map vmo as readable. It is an error if handle does not have VmCanMapRead permissions, the handle does 
+		///        not have the ZX_RIGHT_READ right, or the vmo handle does not have the ZX_RIGHT_READ right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmPermWrite</term>
+		///      <description>
+		///        Map vmo as writable. It is an error if handle does not have VmCanMapWrite permissions, the handle does 
+		///        not have the ZX_RIGHT_WRITE right, or the vmo handle does not have the ZX_RIGHT_WRITE right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmPermExecute</term>
+		///      <description>
+		///        Map vmo as executable. It is an error if handle does not have VmCanMapExecute permissions, 
+		///        the handle handle does not have the ZX_RIGHT_EXECUTE right, or the vmo handle does not have the 
+		///        ZX_RIGHT_EXECUTE right.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmMapRange</term>
+		///      <description>
+		///        Immediately page into the new mapping all backed regions of the VMO. This cannot be
+		///        specified if VmSpecificOverwrite is used.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>VmRequireNonResizable</term>
+		///      <description>
+		///        Maps the VMO only if the VMO is non-resizable, that is, it was created with the ZX_VMO_NON_RESIZABLE option.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </param>
+		/// <param name="vmar_offset">Vmar offset.</param>
+		/// <param name="vmo">Vmo.</param>
+		/// <param name="vmo_offset"> must be 0 if options does not have VmSpecific or VmSpecificOverwrite set. If neither 
+		/// of those are set, then the mapping will be assigned an offset at random by the kernel (with an allocator 
+		/// determined by policy set on the target VMAR).</param>
+		/// <param name="len">Length, must be page aligned.</param>
+		/// <param name="mapped_addr">On success, the mapped address.</param>
+		/// <remarks>
+		/// The VMO that backs a memory mapping can be resized to a smaller size. This can cause the thread is reading or 
+		/// writing to the VMAR region to fault. To avoid this hazard, services that receive VMOs from clients should use 
+		/// VmRequireNonResizable when mapping the VMO
+		/// </remarks>
+		public ZxStatus Map (ZxVmOption options, ulong vmar_offset, VirtualMemoryObject vmo, ulong vmo_offset, ulong len, out IntPtr mapped_addr)
+		{
+			if (vmo == null)
+				throw new ArgumentNullException (nameof (vmo));
+			return zx_vmar_map ((uint)handle, options, vmar_offset, (uint)vmo.DangerousGetHandle (), vmo_offset, len, out mapped_addr);
+		}
+
+		[DllImport (Library)]
+		extern static ZxStatus zx_vmar_unmap (uint handle, IntPtr addr, ulong len);
+
+		/// <summary>
+		/// unmap virtual memory pages between addr and addr+len.
+		/// </summary>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        on success.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle is not a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrWrongType</term>
+		///      <description>
+		///        handle is not a VMAR handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        addr is not page-aligned, len is 0 or not page-aligned, or the requested range partially overlaps a sub-region.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadState</term>
+		///      <description>
+		///        handle refers to a destroyed handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNotFound</term>
+		///      <description>
+		///        Could not find the requested mapping.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
+		/// <param name="addr">Address start</param>
+		/// <param name="len">Length of the region to unmap, must be page aligned.</param>
+		/// <remarks>This unmaps all VMO mappings and destroys (as if Destroy() were called) all sub-regions within the absolute 
+		/// range including addr and ending before exclusively at addr + len. Any sub-region that is in the range must be fully 
+		/// in the range (i.e. partial overlaps are an error). If a mapping is only partially in the range, the mapping is 
+		/// split and the requested portion is unmapped.
+		/// </remarks>
+		public ZxStatus Unmap (IntPtr addr, ulong len)
+		{
+			return zx_vmar_unmap ((uint) handle, addr, len);
+		}
+
+		/// <summary>
+		/// Creates a duplicate of the object with the specified rights, by requesting the kernel to duplicate the handle with those values
+		/// </summary>
+		/// <returns>
+		///    <list type="bullet">
+		///    <item>
+		///      <term>Ok</term>
+		///      <description>
+		///        and the duplicate in result
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrBadHandle</term>
+		///      <description>
+		///        handle isn't a valid handle.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrInvalidArgs</term>
+		///      <description>
+		///        The rights requested are not a subset of handle rights or out is an invalid pointer.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrAccessDenied</term>
+		///      <description>
+		///        handle does not have ZX_RIGHT_DUPLICATE and may not be duplicated.
+		///      </description>
+		///    </item>
+		///    <item>
+		///      <term>ErrNoMemory</term>
+		///      <description>
+		///        Failure due to lack of memory. There is no good way for userspace to handle this (unlikely) error. In a future build this error will no longer occur.
+		///      </description>
+		///    </item>
+		/// </list>
+		/// </returns>
+		/// <param name="rights">New desired access rights.</param>
+		public ZxStatus Duplicate (ZxRights rights, out VirtualMemoryAddressRegion result)
+		{
+			uint rhandle;
+			var ret = zx_handle_duplicate ((uint)handle, rights, out rhandle);
+			if (ret == ZxStatus.Ok)
+				result = new VirtualMemoryAddressRegion (rhandle, address);
+			else
+				result = null;
+			return ret;
+		}
 	}
 }

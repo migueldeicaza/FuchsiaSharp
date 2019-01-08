@@ -15,7 +15,7 @@ namespace ZirconSharp {
 	///   Zircon statuses are signed 32 bit integers. The space of values is
 	///   divided as follows:  Zero value indicates an OK status; negative values are defined by the system, 
     	///   in this enumeration; positive values are reserved for protocol-specific error values,
-	///   and will never be defined by the system.
+	///   and will never be defined by the system.  This corresponds to the C definition zx_status_t
 	/// </summary>
 	public enum ZxStatus {
 		Ok = 0,
@@ -234,7 +234,7 @@ namespace ZirconSharp {
 	}
 
 	/// <summary>
-	/// A duration in nanoseconds
+	/// A duration in nanoseconds (zx_duration_t)
 	/// </summary>
 	public struct ZxDuration {
 		long NanoSeconds;
@@ -579,5 +579,37 @@ namespace ZirconSharp {
 		/// Maps the VMO only if the VMO is non-resizable, that is, it was created with the VmoOptions.NonResizable option.
 		/// </summary>
 		VmRequireNonResizable = 1u << 11,
+	}
+
+	/// <summary>
+	/// The object type, corresponds to the c type zx_obj_type_t.
+	/// </summary>
+	public enum ZxObjectType {
+		None = 0,
+		Process = 1,
+		Thread = 2,
+		Vmo = 3,
+		Channel = 4,
+		Event = 5,
+		Port = 6,
+		Interrupt = 9,
+		Pci = _DEVICE      11,
+		Log = 12,
+		Socket = 14,
+		Resource = 15,
+		Eventpair = 16,
+		Job = 17,
+		Vmar = 18,
+		Fifo = 19,
+		Guest = 20,
+		Vcpu = 21,
+		Timer = 22,
+		Iommu = 23,
+		Bti = 24,
+		Profile = 25,
+		Pmt = 26,
+		SuspendToken = 27,
+		Pager = 28,
+		Last = 29,
 	}
 }

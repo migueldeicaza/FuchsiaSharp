@@ -59,7 +59,7 @@ namespace ZirconSharp {
 	///   ZX_RIGHT_DUPLICATE right.
 	/// </para>
 	/// </remarks>
-	public class Channel : ZirconHandle {
+	public class Channel : ZirconObject {
 		public Channel ()
 		{
 		}

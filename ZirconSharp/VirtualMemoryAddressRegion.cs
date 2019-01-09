@@ -54,7 +54,7 @@ namespace ZirconSharp {
 	///   parent VMAR had that permission.
 	/// </para>
 	/// </remarks>
-	public class VirtualMemoryAddressRegion : ZirconHandle {
+	public class VirtualMemoryAddressRegion : ZirconObject {
 		[DllImport (Library)]
 		extern static ZxStatus zx_vmar_allocate (uint parentMvarHandle, ZxVmOption options, ulong offset, ulong size, out uint child_mvar_handle, out IntPtr child_addr);
 		IntPtr address;

@@ -114,7 +114,7 @@ namespace ZirconSharp {
 	///   drivers.
 	/// </para>
 	/// </remarks>
-	public class VirtualMemoryObject : ZirconHandle {
+	public class VirtualMemoryObject : ZirconObject {
 
 		VirtualMemoryObject (uint handle) : base (handle, ownsHandle: true) { }
 

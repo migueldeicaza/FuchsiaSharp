@@ -593,7 +593,7 @@ namespace ZirconSharp {
 		Event = 5,
 		Port = 6,
 		Interrupt = 9,
-		Pci = _DEVICE      11,
+		PciDevice = 11,
 		Log = 12,
 		Socket = 14,
 		Resource = 15,

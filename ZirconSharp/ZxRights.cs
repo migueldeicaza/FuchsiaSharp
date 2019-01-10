@@ -1,4 +1,13 @@
-﻿using System;
+﻿//
+// ZxRights.cs: Rights definitions
+//
+// Author:
+//   Miguel de Icaza (miguel@gnome.org)
+//
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+using System;
 namespace ZirconSharp {
 	/// <summary>
 	/// Rights are associated with handles and convey privileges to perform actions on either the associated handle or the object associated with the handle.

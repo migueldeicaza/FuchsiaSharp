@@ -1,4 +1,13 @@
-﻿using System;
+﻿//
+// Objet.cs: ZirconObject is the base class for the various handle-based objects in the Zircon kernel.
+//
+// Author:
+//   Miguel de Icaza (miguel@gnome.org)
+//
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+using System;
 using System.Runtime.InteropServices;
 
 namespace ZirconSharp {

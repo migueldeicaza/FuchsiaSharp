@@ -1,4 +1,13 @@
-﻿using System;
+﻿//
+// VirtualMemoryAddressRegion.cs: Support for the VMAR Zircon object type.
+//
+// Author:
+//   Miguel de Icaza (miguel@gnome.org)
+//
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+using System;
 using System.Runtime.InteropServices;
 
 namespace ZirconSharp {

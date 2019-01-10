@@ -35,7 +35,7 @@ namespace ZirconSharp {
     	/// and then its last thread has exited.
     	/// </para>
     	/// </remarks>
-	public class Process : ZirconObject {
+	public class Process : Task {
 		internal Process (uint handle, bool ownsHandle) : base (handle, ownsHandle)
 		{
 		}

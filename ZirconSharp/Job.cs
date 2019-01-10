@@ -38,7 +38,7 @@ namespace ZirconSharp {
 	/// Processes can be created by calling the CreateProcess() method on your Job instance.
 	/// </para>
 	/// </remarks>
-	public class Job : ZirconObject {
+	public class Job : Task {
 		Job (uint handle, bool ownsHandle) : base (handle, ownsHandle)
 		{
 		}

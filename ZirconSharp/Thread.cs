@@ -65,7 +65,7 @@ namespace ZirconSharp {
     	/// </para>
 	/// <para>Fuchsia native threads are always detached. That is, there is no join() operation needed to do a clean termination. However, some runtimes above the kernel, such as C11 or POSIX might require threads to be joined.</para>
 	/// </remarks>
-	public class Thread : ZirconObject {
+	public class Thread : Task {
 		internal Thread (uint handle, bool ownsHandle) : base (handle, ownsHandle)
 		{
 		}

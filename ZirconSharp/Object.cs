@@ -182,7 +182,7 @@ namespace ZirconSharp {
 			      out uint handleResult);
 
 		[DllImport (Library)]
-		extern static ZxStatus object_get_info (uint handle, ZxObjectInfoTopic topic, IntPtr buffer, IntPtr buffer_size, out IntPtr actual, out IntPtr avail);
+		internal extern static ZxStatus object_get_info (uint handle, ZxObjectInfoTopic topic, IntPtr buffer, IntPtr buffer_size, out IntPtr actual, out IntPtr avail);
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="T:ZirconSharp.ZirconObject"/> is valid.

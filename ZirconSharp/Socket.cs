@@ -128,18 +128,75 @@ namespace ZirconSharp {
 					   /* size_t */ UIntPtr buffer_size,
 					   /* size_t* */ out UIntPtr actual);
 
-		public ZxStatus Read (IntPtr buffer, ulong bufferSize, out ulong readBytes)
+		[DllImport (Library, EntryPoint="zx_socket_read")]
+		extern static ZxStatus zx_socket_read2 (uint handle,
+					   RWOptions options,
+					   IntPtr buffer,
+					   /* size_t */ UIntPtr buffer_size,
+					   UIntPtr actualIgnored);
+
+		public ZxStatus Read (IntPtr buffer, ulong bufferSize, out ulong readBytes, RWOptions options = RWOptions.None)
 		{
-			var ret = zx_socket_read ((uint)handle, RWOptions.None, buffer, (UIntPtr)bufferSize, out var lreadBytes);
+			var ret = zx_socket_read ((uint)handle, options, buffer, (UIntPtr)bufferSize, out var lreadBytes);
 			readBytes = (ulong)lreadBytes;
 			return ret;
 		}
 
-		public ZxStatus ReadControl (IntPtr buffer, ulong bufferSize, out ulong readBytes)
+		public ZxStatus Read (IntPtr buffer, ulong bufferSize, RWOptions options = RWOptions.None)
 		{
-			var ret = zx_socket_read ((uint)handle, RWOptions.Control, buffer, (UIntPtr) bufferSize, out var lreadBytes);
-			readBytes = (ulong)lreadBytes;
+			var ret = zx_socket_read2 ((uint)handle, options, buffer, (UIntPtr)bufferSize, UIntPtr.Zero);
 			return ret;
+		}
+
+		[DllImport (Library)]
+		extern static ZxStatus zx_socket_share (uint handle, uint socketToShare);
+
+		public ZxStatus Share (Socket socketToShare)
+		{
+			if (socketToShare == null)
+				throw new ArgumentNullException (nameof (socketToShare));
+			return zx_socket_share ((uint)handle, (uint) socketToShare.handle);
+		}
+
+		[DllImport (Library)]
+		extern static ZxStatus zx_socket_write (uint handle,
+					   RWOptions options,
+					   IntPtr buffer,
+					   /* size_t */ UIntPtr buffer_size,
+					   /* size_t* */ out UIntPtr actual);
+		[DllImport (Library, EntryPoint="zx_socket_write")]
+		extern static ZxStatus zx_socket_write2 (uint handle,
+					   RWOptions options,
+					   IntPtr buffer,
+					   /* size_t */ UIntPtr buffer_size,
+					   /* size_t* */ UIntPtr actual);
+
+		public ZxStatus Write (IntPtr buffer, ulong bufferSize, out ulong writtenBytes, RWOptions options = RWOptions.None)
+		{
+			var ret = zx_socket_write ((uint)handle, options, buffer, (UIntPtr)bufferSize, out var lwrittenBytes);
+			writtenBytes = (ulong)lwrittenBytes;
+			return ret;
+		}
+
+		public ZxStatus Write (IntPtr buffer, ulong bufferSize, RWOptions options = RWOptions.None)
+		{
+			var ret = zx_socket_write2 ((uint)handle, options, buffer, (UIntPtr)bufferSize, UIntPtr.Zero);
+			return ret;
+		}
+
+		[Flags]
+		public enum ShutdownOptions : uint {
+			None = 0,
+			Write = 1,
+	    		Read = 2
+		}
+
+		[DllImport (Library)]
+		extern static ZxStatus zx_socket_shutdown (uint handle, ShutdownOptions options);
+
+		public ZxStatus Shutdown (ShutdownOptions options = ShutdownOptions.None)
+		{
+			return zx_socket_shutdown ((uint)handle, options);
 		}
 	}
 }

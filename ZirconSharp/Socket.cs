@@ -1,5 +1,5 @@
 ﻿//
-// Task.cs: API bindings for the Zircon Task base class
+// Socket.cs: API bindings for the Zircon Socket class
 //
 // Author:
 //   Miguel de Icaza (miguel@gnome.org)

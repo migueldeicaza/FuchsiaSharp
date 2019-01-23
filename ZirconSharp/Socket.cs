@@ -61,7 +61,7 @@ namespace ZirconSharp {
 			get {
 				unsafe {
 					InfoSocket buffer = new InfoSocket ();
-					var code = object_get_info ((uint)handle, ZxObjectInfoTopic.Socket, (IntPtr)(&buffer), (IntPtr)sizeof (InfoSocket), out var ignore1, out var ignore2);
+					var code = zx_object_get_info ((uint)handle, ZxObjectInfoTopic.Socket, (IntPtr)(&buffer), (IntPtr)sizeof (InfoSocket), out var ignore1, out var ignore2);
 					return buffer;
 				}
 			}

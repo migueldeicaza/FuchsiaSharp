@@ -182,13 +182,13 @@ namespace ZirconSharp {
 			      out uint handleResult);
 
 		[DllImport (Library)]
-		internal extern static ZxStatus object_get_info (uint handle, ZxObjectInfoTopic topic, IntPtr buffer, IntPtr buffer_size, out IntPtr actual, out IntPtr avail);
+		internal extern static ZxStatus zx_object_get_info (uint handle, ZxObjectInfoTopic topic, IntPtr buffer, IntPtr buffer_size, out IntPtr actual, out IntPtr avail);
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="T:ZirconSharp.ZirconObject"/> is valid.
 		/// </summary>
 		/// <value><c>true</c> if is valid; otherwise, <c>false</c>.</value>
-		public bool IsValid => object_get_info ((uint)handle, ZxObjectInfoTopic.HandleValid, IntPtr.Zero, IntPtr.Zero, out var ignore1, out var ignore2) == ZxStatus.Ok;
+		public bool IsValid => zx_object_get_info ((uint)handle, ZxObjectInfoTopic.HandleValid, IntPtr.Zero, IntPtr.Zero, out var ignore1, out var ignore2) == ZxStatus.Ok;
 
 		/// <summary>
 		/// Gets the Basic handle information for the object.
@@ -198,7 +198,7 @@ namespace ZirconSharp {
 			get {
 				unsafe {
 					BasicInfoHandle buffer = new BasicInfoHandle ();
-					var code = object_get_info ((uint)handle, ZxObjectInfoTopic.HandleBasic, (IntPtr)(&buffer), (IntPtr) sizeof(BasicInfoHandle), out var ignore1, out var ignore2);
+					var code = zx_object_get_info ((uint)handle, ZxObjectInfoTopic.HandleBasic, (IntPtr)(&buffer), (IntPtr) sizeof(BasicInfoHandle), out var ignore1, out var ignore2);
 
 					return buffer;
 				}
